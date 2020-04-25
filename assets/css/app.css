@@ -2,3 +2,21 @@
 
 @import "./phoenix.css";
 @import "../node_modules/todomvc-app-css/index.css";
+
+.footer {
+  padding-top: 30px;
+  padding-bottom: 70px;
+}
+
+.footer .filters {
+  position: static;
+  float: none;
+}
+
+.footer .clear-completed {
+  float: none;
+}
+
+.todo-list li form {
+  margin-bottom: 0;
+}

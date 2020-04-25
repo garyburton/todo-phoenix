@@ -19,11 +19,30 @@ import LiveSocket from "phoenix_live_view";
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
 
+let Hooks = {};
+Hooks.Todo = {
+  mounted() {
+    this.el.addEventListener("dblclick", (e) => {
+      const toggle = this.el.querySelector(".toggle");
+
+      this.pushEvent("edit", {
+        "todo-id": toggle.getAttribute("phx-value-todo-id"),
+      });
+    });
+  },
+  updated() {
+    const edit = this.el.querySelector(".edit");
+    edit.focus();
+    edit.setSelectionRange(edit.value.length, edit.value.length);
+  },
+};
+
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
+  hooks: Hooks,
 });
 
 // connect if there are any LiveViews on the page

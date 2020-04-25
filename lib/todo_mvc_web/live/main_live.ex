@@ -8,7 +8,7 @@ defmodule TodoMVCWeb.MainLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, todos: [Todo.new("test!")])}
+    {:ok, assign(socket, todos: [], filter: "all")}
   end
 
   # We don't want to add a todo if the text is empty
@@ -35,6 +35,65 @@ defmodule TodoMVCWeb.MainLive do
     end
 
     todos = socket.assigns[:todos] |> Enum.map(toggle)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_event("toggle-all", %{"checked" => "false"}, socket) do
+    todos = socket.assigns[:todos] |> Enum.map(&Todo.complete/1)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_event("toggle-all", _params, socket) do
+    todos = socket.assigns[:todos] |> Enum.map(&Todo.activate/1)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_event("clear-completed", _params, socket) do
+    todos = socket.assigns[:todos] |> Enum.reject(fn t -> t.state == "completed" end)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_params(%{"filter" => filter}, _uri, socket) do
+    {:noreply, assign(socket, filter: filter)}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("edit", %{"todo-id" => id}, socket) do
+    toggle_editing = fn
+      %Todo{id: ^id} = todo -> %{todo | editing: true}
+      todo -> todo
+    end
+
+    todos = socket.assigns[:todos] |> Enum.map(toggle_editing)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_event("change", %{"title" => text}, socket) do
+    update_text = fn
+      %Todo{editing: true} = todo -> %{todo | text: text}
+      todo -> todo
+    end
+
+    todos = socket.assigns[:todos] |> Enum.map(update_text)
+
+    {:noreply, assign(socket, todos: todos)}
+  end
+
+  def handle_event("stop-editing", %{"todo-id" => id}, socket) do
+    toggle_editing = fn
+      %Todo{id: ^id} = todo -> %{todo | editing: false}
+      todo -> todo
+    end
+
+    todos = socket.assigns[:todos] |> Enum.map(toggle_editing)
 
     {:noreply, assign(socket, todos: todos)}
   end

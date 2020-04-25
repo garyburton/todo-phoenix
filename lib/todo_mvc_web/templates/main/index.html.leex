@@ -6,11 +6,22 @@
     </form>
   </header>
   <section class="main">
-    <input id="toggle-all" class="toggle-all" type="checkbox">
-    <label for="toggle-all">Mark all as complete</label>
+    <%= if Enum.any?(@todos) do %>
+      <%= content_tag :input,
+        nil,
+        type: "checkbox",
+        id: "toggle-all",
+        class: "toggle-all",
+        name: "toggle-all",
+        phx_click: "toggle-all",
+        phx_value_checked: all_todos_completed?(@todos) |> to_string(),
+        checked: if all_todos_completed?(@todos), do: "checked"
+      %>
+      <label for="toggle-all">Mark all as complete</label>
+    <% end %>
     <ul class="todo-list">
-      <%= for todo <- @todos do %>
-        <%= content_tag :li, class: todo_classes(todo) do %>
+      <%= for todo <- @todos, todo_visible?(todo, @filter) do %>
+        <%= content_tag :li, class: todo_classes(todo), phx_hook: "Todo" do %>
           <div class="view">
             <%= content_tag :input,
               nil,
@@ -19,29 +30,55 @@
               phx_click: "toggle",
               phx_value_todo_id: todo.id,
               checked: if todo.state == "completed", do: "checked"
-        %>
+            %>
             <label>
               <%= todo.text %>
             </label>
             <button class="destroy" phx-click="destroy" phx-value-todo-id="<%= todo.id %>"></button>
           </div>
+          <form phx-change="change" phx-submit="change">
+            <input
+              class="edit"
+              name="title"
+              phx-value-todo-id="<%= todo.id %>"
+              phx-blur="stop-editing"
+              value="<%= todo.text %>"
+            >
+          </form>
         <% end %>
       <% end %>
     </ul>
   </section>
-  <footer class="footer">
-    <span class="todo-count"></span>
-    <ul class="filters">
-      <li>
-        <a href="#/" class="selected">All</a>
-      </li>
-      <li>
-        <a href="#/active">Active</a>
-      </li>
-      <li>
-        <a href="#/completed">Completed</a>
-      </li>
-    </ul>
-    <button class="clear-completed">Clear completed</button>
-  </footer>
+  <%= if Enum.any?(@todos) do %>
+    <footer class="footer">
+      <span class="todo-count">
+        <%= left_count_label(@todos) %>
+      </span>
+      <ul class="filters">
+        <li>
+          <%= live_patch "All",
+            to: Routes.live_path(@socket, TodoMVCWeb.MainLive, %{filter: "all"}),
+            class: selected_class(@filter, "all")
+          %>
+        </li>
+        <li>
+          <%= live_patch "Active",
+            to: Routes.live_path(@socket, TodoMVCWeb.MainLive, %{filter: "active"}),
+            class: selected_class(@filter, "active")
+          %>
+        </li>
+        <li>
+          <%= live_patch "Completed",
+            to: Routes.live_path(@socket, TodoMVCWeb.MainLive, %{filter: "completed"}),
+            class: selected_class(@filter, "completed")
+          %>
+        </li>
+      </ul>
+      <%= if Enum.any?(@todos, fn t -> t.state == "completed" end) do %>
+        <button class="clear-completed" phx-click="clear-completed">
+          Clear completed
+        </button>
+      <% end %>
+    </footer>
+  <% end %>
 </section>
