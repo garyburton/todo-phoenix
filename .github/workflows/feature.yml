@@ -33,3 +33,4 @@ jobs:
         region: eu-west-2
         tags: ${{ steps.vars.outputs.short_ref }}
         create_repo: true
+        extra_build_args: PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }}
