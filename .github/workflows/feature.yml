@@ -21,7 +21,8 @@ jobs:
     - name: Check out the repo
       uses: actions/checkout@v2
     - name: Get branch name
-      uses: nelonoel/branch-name@v1
+      id: vars
+      run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
     - name: Build and push backend Docker image
       uses: kciter/aws-ecr-action@v1
       with:
@@ -30,5 +31,5 @@ jobs:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         repo: phoenix-todo
         region: eu-west-2
-        tags: ${{ BRANCH_NAME }}
+        tags: ${{ steps.vars.outputs.short_ref }}
         create_repo: true
