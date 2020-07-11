@@ -16,7 +16,8 @@ RUN mix local.hex --force
 
 RUN SECRET=$(mix phx.gen.secret)\
     $SECRET_KEY_BASE=SECRET
-RUN mix deps.get --only prod
+RUN echo ${SECRET_KEY_BASE}
+RUN mix deps.get
 RUN mix compile
 RUN npm i --prefix ./assets
 RUN npm run deploy --prefix ./assets
