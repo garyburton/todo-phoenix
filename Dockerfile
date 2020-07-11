@@ -15,12 +15,12 @@ WORKDIR /app
 RUN mix local.hex --force
 
 RUN SECRET=$(mix phx.gen.secret)\
-    $SECRET_KEY_BASE=SECRET\
-    mix deps.get\
-    mix compile\
-    npm i --prefix ./assets\
-    npm run deploy --prefix ./assets\
-    mix phx.digest
+    $SECRET_KEY_BASE=SECRET
+RUN mix deps.get --only prod
+RUN mix compile
+RUN npm i --prefix ./assets
+RUN npm run deploy --prefix ./assets
+RUN mix phx.digest
 
 EXPOSE 4000
 CMD ["mix", "phx.server"]
