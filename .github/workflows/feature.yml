@@ -31,3 +31,4 @@ jobs:
         repo: phoenix-todo
         region: eu-west-2
         tags: ${{ BRANCH_NAME }}
+        create_repo: true
