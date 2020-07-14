@@ -58,19 +58,5 @@ jobs:
         ./get_helm.sh
         echo "deploying app via helm"
         helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
-    # - name: Build and push backend Docker image
-    #   uses: kciter/aws-ecr-action@v1
-    #   with:
-    #     access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-    #     repo: phoenix-todo
-    #     region: eu-west-2
-    #     tags: ${{ steps.vars.outputs.short_ref }}
-    #     create_repo: true
-    #     extra_build_args: "--build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }}"
-    # - name: Deploy feature with helm
-    #   uses: WyriHaximus/github-action-helm3@v2
-    #   with:
-    #     kubeconfig: '${{ secrets.KUBE_CONFIG }}'
-    #     exec: helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
+        echo "get the deployed url"
+        kubectl get ingress/phoenix-todo-${{ steps.vars.outputs.short_ref }}-ingress -n phoenix-todo
