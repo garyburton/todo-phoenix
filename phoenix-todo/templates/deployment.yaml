@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "phoenix-todo-{{ .Values.image.tag }}-deployment"
+  namespace: "phoenix-todo"
+spec:
+  selector:
+    matchLabels:
+      app: "phoenix-todo-{{ .Values.image.tag }}"
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: "phoenix-todo-{{ .Values.image.tag }}"
+    spec:
+      containers:
+      - image: 023842326014.dkr.ecr.eu-west-2.amazonaws.com/phoenix-todo:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        name: "phoenix-todo"
+        ports:
+        - containerPort: 4000
