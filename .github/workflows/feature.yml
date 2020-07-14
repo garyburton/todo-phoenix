@@ -37,5 +37,5 @@ jobs:
     - name: Deploy feature with helm
       uses: WyriHaximus/github-action-helm3@v2
       with:
-        kubeconfig: '${{ secrets.KUBECONFIG }}'
+        kubeconfig: '${{ secrets.KUBE_CONFIG }}'
         exec: helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
