@@ -30,7 +30,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-2
     - name: Install aws-iam-authenticator
-      uses: prepor/action-aws-iam-authenticator@v1
+      uses: prepor/action-aws-iam-authenticator@master
     - name: Install kubectl
       run: |
         curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl
