@@ -34,6 +34,9 @@ jobs:
         tags: ${{ steps.vars.outputs.short_ref }}
         create_repo: true
         extra_build_args: "--build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }}"
+    - uses: prepor/action-aws-iam-authenticator@master
+      with:
+        version: 0.5.1
     - name: Deploy feature with helm
       uses: WyriHaximus/github-action-helm3@v2
       with:
