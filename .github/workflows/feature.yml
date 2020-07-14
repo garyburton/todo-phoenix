@@ -31,15 +31,6 @@ jobs:
         aws-region: eu-west-2
     - name: Install aws-iam-authenticator
       uses: prepor/action-aws-iam-authenticator@master
-    - name: Install kubectl
-      run: |
-        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl
-        chmod +x ./kubectl
-        sudo mv ./kubectl /usr/bin/kubectl
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > /tmp/config
-        export KUBECONFIG=/tmp/config
-        kubectl version --short --client
-        kubectl get svc
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -47,10 +38,26 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: phoenix-todo
-        IMAGE_TAG: ${{ steps.vars.outputs.short_ref }}-${{ github.sha }}
+        IMAGE_TAG: ${{ steps.vars.outputs.short_ref }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }} .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Install kubectl, helm and deploy app
+      run: |
+        echo "Installing kubectl"
+        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/bin/kubectl
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > /tmp/config
+        export KUBECONFIG=/tmp/config
+        kubectl version --short --client
+        kubectl get svc
+        echo "installing helm"
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        echo "deploying app via helm"
+        helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
     # - name: Build and push backend Docker image
     #   uses: kciter/aws-ecr-action@v1
     #   with:
