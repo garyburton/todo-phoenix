@@ -48,6 +48,7 @@ jobs:
         echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > /tmp/config
         export KUBECONFIG=/tmp/config
         kubectl version --short --client
+        kubectl get svc
     # - name: Build and push backend Docker image
     #   uses: kciter/aws-ecr-action@v1
     #   with:
