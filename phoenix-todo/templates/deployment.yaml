@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: "phoenix-todo-{{ .Values.image.tag }}"
-  replicas: 5
+  replicas: 1
   template:
     metadata:
       labels:
