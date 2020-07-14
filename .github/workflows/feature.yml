@@ -35,7 +35,7 @@ jobs:
         create_repo: true
         extra_build_args: "--build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }}"
     - name: Deploy feature with helm
-      uses: WyriHaximus/github-action-helm3@v1
+      uses: WyriHaximus/github-action-helm3@v2
       with:
         kubeconfig: '${{ secrets.KUBECONFIG }}'
         exec: helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
