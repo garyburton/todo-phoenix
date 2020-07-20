@@ -11,7 +11,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: "phoenix-todo"
+      app: "phoenix-todo-<IMAGE>"
   replicas: 1
   template:
     metadata:
