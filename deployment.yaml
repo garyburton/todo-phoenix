@@ -24,6 +24,13 @@ spec:
         name: "phoenix-todo"
         ports:
         - containerPort: 4000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+      imagePullSecrets:
+      - name: registry-gazotron
 ---
 apiVersion: v1
 kind: Service
@@ -39,7 +46,7 @@ spec:
   selector:
     app: "phoenix-todo-<IMAGE>"
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: "phoenix-todo--<IMAGE>-ingress"
