@@ -23,40 +23,25 @@ jobs:
     - name: Get branch name
       id: vars
       run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Build container image
+      run: docker build -t registry.digitalocean.com/gazotron/phoenix-todo:${{ steps.vars.outputs.short_ref }}
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-    - name: Install aws-iam-authenticator
-      uses: prepor/action-aws-iam-authenticator@master
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: phoenix-todo
-        IMAGE_TAG: ${{ steps.vars.outputs.short_ref }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }} .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-    - name: Install kubectl, helm and deploy app
-      run: |
-        echo "Installing kubectl"
-        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl
-        chmod +x ./kubectl
-        sudo mv ./kubectl /usr/bin/kubectl
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > /tmp/config
-        export KUBECONFIG=/tmp/config
-        kubectl version --short --client
-        kubectl get svc
-        echo "installing helm"
-        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-        chmod 700 get_helm.sh
-        ./get_helm.sh
-        echo "deploying app via helm"
-        helm upgrade phoenix-todo-${{ steps.vars.outputs.short_ref }} ./phoenix-todo --install --namespace=phoenix-todo --set=image.tag=${{ steps.vars.outputs.short_ref }}
-        echo "get the deployed url"
-        kubectl get ingress/phoenix-todo-${{ steps.vars.outputs.short_ref }}-ingress -n phoenix-todo
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+    - name: Push image to DigitalOcean Container Registry
+      run: docker push registry.digitalocean.com/gazotron/phoenix-todo
+    - name: Update deployment file
+      run: TAG=$(echo $GITHUB_REF#refs/*/) && sed -i 's|<IMAGE>|'${TAG}'|' $GITHUB_WORKSPACE/deployment.yml
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save gazotron
+    - name: Deploy to DigitalOcean Kubernetes
+      run: kubectl apply -f $GITHUB_WORKSPACE/deployment.yml
+
+    - name: Verify deployment
+      run: kubectl rollout status deployment/phoenix-todo
+
+    - name: Get URL
+      run: kubectl get ingress/phoenix-todo-${{ steps.vars.outputs.short_ref }}-ingress -n phoenix-todo
