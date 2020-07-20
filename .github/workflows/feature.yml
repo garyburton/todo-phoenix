@@ -34,7 +34,7 @@ jobs:
     - name: Push image to DigitalOcean Container Registry
       run: docker push registry.digitalocean.com/gazotron/phoenix-todo
     - name: Update deployment file
-      run: TAG=$(echo $GITHUB_REF#refs/*/) && sed -i 's|<IMAGE>|'${TAG}'|' $GITHUB_WORKSPACE/deployment.yml
+      run: TAG=$(echo $GITHUB_REF#refs/*/) && sed -i 's|<IMAGE>|'${TAG}'|' $GITHUB_WORKSPACE/deployment.yaml
     - name: Save DigitalOcean kubeconfig
       run: doctl kubernetes cluster kubeconfig save gazotron
     - name: Deploy to DigitalOcean Kubernetes
