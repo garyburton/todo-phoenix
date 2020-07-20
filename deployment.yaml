@@ -49,8 +49,10 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: "phoenix-todo--<IMAGE>-ingress"
+  name: "phoenix-todo-<IMAGE>-ingress"
   namespace: "phoenix-todo"
+  annotations:
+    kubernetes.io/ingress.class: nginx
   labels:
     app: phoenix-todo-<IMAGE>
 spec:
