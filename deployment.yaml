@@ -52,10 +52,10 @@ metadata:
     app: phoenix-todo-<IMAGE>
 spec:
   rules:
-  - host: phoenix-todo-<IMAGE>.188.166.137.67.nip.io
+  # - host: phoenix-todo-<IMAGE>.188.166.137.67.nip.io
     http:
       paths:
-      - path: /*
+      - path: /
         backend:
           serviceName: "service-phoenix-todo-<IMAGE>"
           servicePort: 80
