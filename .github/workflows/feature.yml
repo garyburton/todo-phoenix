@@ -41,7 +41,7 @@ jobs:
       run: kubectl apply -f $GITHUB_WORKSPACE/deployment.yaml
 
     - name: Verify deployment
-      run: kubectl rollout status deployment/phoenix-todo
+      run: kubectl rollout status deployment/phoenix-todo-${{ steps.vars.outputs.short_ref }}
 
     - name: Get URL
       run: kubectl get ingress/phoenix-todo-${{ steps.vars.outputs.short_ref }}-ingress -n phoenix-todo
