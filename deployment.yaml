@@ -24,13 +24,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4000
-        resources:
-          requests:
-            cpu: 100m
-          limits:
-            cpu: 100m
-      imagePullSecrets:
-      - name: registry-gazotron
 ---
 apiVersion: v1
 kind: Service
