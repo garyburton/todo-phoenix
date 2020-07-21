@@ -24,6 +24,8 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 4000
+      imagePullSecrets:
+      - name: registry-gazotron
 ---
 apiVersion: v1
 kind: Service
@@ -50,6 +52,7 @@ metadata:
     app: phoenix-todo-<IMAGE>
 spec:
   rules:
+  - host: phoenix-todo-<IMAGE>.188.166.137.67.xip.io
     - http:
         paths:
           - path: /*
