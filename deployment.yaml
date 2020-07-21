@@ -19,9 +19,9 @@ spec:
         app: "phoenix-todo-<IMAGE>"
     spec:
       containers:
-      - image: registry.digitalocean.com/gazotron/phoenix-todo:<IMAGE>
+      - name: "phoenix-todo"
+        image: registry.digitalocean.com/gazotron/phoenix-todo:<IMAGE>
         imagePullPolicy: Always
-        name: "phoenix-todo"
         ports:
         - containerPort: 4000
         resources:
