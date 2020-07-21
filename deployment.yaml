@@ -19,13 +19,13 @@ spec:
         app: "phoenix-todo-<IMAGE>"
     spec:
       containers:
-      - name: "phoenix-todo"
-        image: registry.digitalocean.com/gazotron/phoenix-todo:<IMAGE>
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 4000
+        - name: "phoenix-todo"
+          image: registry.digitalocean.com/gazotron/phoenix-todo:<IMAGE>
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 4000
       imagePullSecrets:
-      - name: registry-gazotron
+        - name: registry-gazotron
 ---
 apiVersion: v1
 kind: Service
