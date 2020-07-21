@@ -53,9 +53,9 @@ metadata:
 spec:
   rules:
   - host: phoenix-todo-<IMAGE>.188.166.137.67.xip.io
-    - http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: "service-phoenix-todo-<IMAGE>"
-              servicePort: 80
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: "service-phoenix-todo-<IMAGE>"
+          servicePort: 80
