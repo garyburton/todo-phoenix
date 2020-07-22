@@ -55,6 +55,6 @@ spec:
     http:
       paths:
       - path: /
-        backend:
-          serviceName: "phoenix-todo-<IMAGE>-service"
-          servicePort: 8080
+      backend:
+        serviceName: "phoenix-todo-<IMAGE>-service"
+        servicePort: 8080
