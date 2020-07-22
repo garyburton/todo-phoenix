@@ -32,32 +32,29 @@ kind: Service
 metadata:
   name: "phoenix-todo-<IMAGE>-service"
   namespace: "phoenix-todo"
-  annotations:
-    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "false"
 spec:
   ports:
-    - port: 80
+    - port: 8080
       targetPort: 4000
       protocol: TCP
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: "phoenix-todo-<IMAGE>"
-# ---
-# apiVersion: networking.k8s.io/v1beta1
-# kind: Ingress
-# metadata:
-#   name: "phoenix-todo-<IMAGE>-ingress"
-#   namespace: "phoenix-todo"
-#   annotations:
-#     kubernetes.io/ingress.class: nginx
-#   labels:
-#     app: phoenix-todo-<IMAGE>
-# spec:
-#   rules:
-#   - host: phoenix-todo-<IMAGE>.188.166.137.67.nip.io
-#     http:
-#       paths:
-#       - path: /
-#         backend:
-#           serviceName: "service-phoenix-todo-<IMAGE>"
-#           servicePort: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "phoenix-todo-<IMAGE>-ingress"
+  namespace: "phoenix-todo"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app: phoenix-todo-<IMAGE>
+spec:
+  rules:
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: "phoenix-todo-<IMAGE>-service"
+          servicePort: 8080
