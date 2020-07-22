@@ -34,7 +34,7 @@ metadata:
   namespace: "phoenix-todo"
 spec:
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 4000
       protocol: TCP
   type: NodePort
@@ -52,9 +52,10 @@ metadata:
     app: phoenix-todo-<IMAGE>
 spec:
   rules:
+  - host: phoenix-todo-<IMAGE>.garypburton.com
     http:
       paths:
       - path: /
-      backend:
-        serviceName: "phoenix-todo-<IMAGE>-service"
-        servicePort: 8080
+        backend:
+          serviceName: "phoenix-todo-<IMAGE>-service"
+          servicePort: 80
