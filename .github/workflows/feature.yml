@@ -24,7 +24,7 @@ jobs:
       id: vars
       run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
     - name: Build container image
-      run: docker build -t registry.digitalocean.com/gazotron/phoenix-todo:${{ steps.vars.outputs.short_ref }} .
+      run: docker build -t registry.digitalocean.com/gazotron/phoenix-todo:${{ steps.vars.outputs.short_ref }} --build-arg PHOENIX_SECRET=${{ secrets.PHOENIX_SECRET }} .
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
       with:

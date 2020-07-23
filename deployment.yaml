@@ -55,7 +55,7 @@ spec:
   - host: phoenix-todo-<IMAGE>.garypburton.com
     http:
       paths:
-      - path: /
+      - path: /*
         backend:
           serviceName: "phoenix-todo-<IMAGE>-service"
           servicePort: 80
